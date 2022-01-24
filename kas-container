@@ -341,6 +341,9 @@ fi
 
 if [ "${BUILD_SYSTEM}" = "isar" ]; then
 	enable_isar_mode
+
+	trace mkdir -p "${KAS_BUILD_DIR}/schroot_overlay"
+	EXTRA_VOLUMES="${EXTRA_VOLUMES} -v "${KAS_BUILD_DIR}/schroot_overlay":/var/lib/schroot/union/overlay:rw"
 fi
 
 set_container_image_var
@@ -359,6 +362,7 @@ fi
 set -- "$@" -v "${KAS_REPO_DIR}":/repo:${KAS_REPO_MOUNT_OPT} \
 	-v "${KAS_WORK_DIR}":/work:rw -e KAS_WORK_DIR=/work \
 	-v "${KAS_BUILD_DIR}":/build:rw \
+	${EXTRA_VOLUMES} \
 	--workdir=/repo \
 	-e KAS_BUILD_DIR=/build \
 	-e USER_ID="$(id -u)" -e GROUP_ID="$(id -g)" --rm --init
